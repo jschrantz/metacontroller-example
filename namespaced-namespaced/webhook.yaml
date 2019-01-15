@@ -1,0 +1,35 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: namespaced-namespaced-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: namespaced-namespaced-controller
+  template:
+    metadata:
+      labels:
+        app: namespaced-namespaced-controller
+    spec:
+      containers:
+      - name: controller
+        image: python:2.7
+        command: ["python", "/hooks/sync.py"]
+        volumeMounts:
+        - name: hooks
+          mountPath: /hooks
+      volumes:
+      - name: hooks
+        configMap:
+          name: namespaced-namespaced-controller
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: namespaced-namespaced-controller
+spec:
+  selector:
+    app: namespaced-namespaced-controller
+  ports:
+  - port: 80

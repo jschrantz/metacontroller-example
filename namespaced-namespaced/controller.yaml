@@ -1,0 +1,22 @@
+apiVersion: metacontroller.k8s.io/v1alpha1
+kind: CompositeController
+metadata:
+  name: namespaced-namespaced-controller
+spec:
+  generateSelector: true
+  parentResource:
+    apiVersion: example.com/v1
+    resource: namespaced-namespaceds
+  childResources:
+  - apiVersion: v1
+    resource: configmaps
+    updateStrategy:
+      method: InPlace
+  - apiVersion: networking.k8s.io/v1
+    resource: networkpolicies
+    updateStrategy:
+      method: InPlace
+  hooks:
+    sync:
+      webhook:
+        url: http://namespaced-namespaced-controller.namespaced-namespaced/sync
